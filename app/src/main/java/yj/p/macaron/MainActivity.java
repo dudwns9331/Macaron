@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import yj.p.macaron.inputActivity;
+import yj.p.macaron.add.inputActivity;
 import yj.p.macaron.decorators.EventDecorator;
 import yj.p.macaron.decorators.OneDayDecorator;
 import yj.p.macaron.decorators.SaturdayDecorator;
