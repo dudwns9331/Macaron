@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="year"
                 android:textSize="30sp"
+                android:textStyle="bold|italic"
                 android:padding="5dp"
                  />
 
