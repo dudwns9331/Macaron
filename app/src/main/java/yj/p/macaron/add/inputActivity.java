@@ -44,7 +44,7 @@ public class inputActivity extends AppCompatActivity {
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         // 어댑터 추가
-        final Work_date_adpater date_adpater = new Work_date_adpater(this);
+        final Work_date_adapter date_adpater = new Work_date_adapter(this);
         // 어댑터 보여주기
         recyclerView.setAdapter(date_adpater);
 

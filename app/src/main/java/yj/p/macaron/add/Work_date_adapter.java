@@ -9,22 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import yj.p.macaron.R;
-import yj.p.macaron.add.Work_date;
 
-public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.ViewHolder>
+public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.ViewHolder>
         implements ItemTouchHelperListener, OnDialogListener, OnWorkDateClickListener{
 
     // 선택된 아이템을 위해서 사용
@@ -33,7 +28,7 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
     Context context;
     OnWorkDateClickListener listener;
 
-    public Work_date_adpater(Context context) {
+    public Work_date_adapter(Context context) {
         this.context = context;
     }
 
