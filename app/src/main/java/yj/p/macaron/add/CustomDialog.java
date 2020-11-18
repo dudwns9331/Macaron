@@ -24,6 +24,9 @@ import java.util.Objects;
 import yj.p.macaron.R;
 import yj.p.macaron.add.Work_date;
 
+/**
+ * inputActivity 에서 스와이프 하고 수정 버튼을 누르면 수행되는 클래스 (다이얼로그)
+ */
 public class CustomDialog extends Dialog {
 
     private OnDialogListener listener;
@@ -88,6 +91,7 @@ public class CustomDialog extends Dialog {
             }
         });
 
+        // 종료 시간 버튼
         end_time = findViewById(R.id.end_time);
         end_time.setOnClickListener(new View.OnClickListener() {
             @Override

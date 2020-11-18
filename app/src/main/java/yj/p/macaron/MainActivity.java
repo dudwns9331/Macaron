@@ -20,10 +20,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import yj.p.macaron.add.inputActivity;
 import yj.p.macaron.decorators.EventDecorator;
@@ -50,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Button add_button = findViewById(R.id.add_button);
         Button clear_button = findViewById(R.id.clear_button);
 
+        // 달력 초기 설정
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
                 .setMinimumDate(CalendarDay.from(2020,0,1))
@@ -57,8 +55,11 @@ public class MainActivity extends AppCompatActivity {
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
+        //달력 선택 모드, 표현 범위
         materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
         materialCalendarView.setShowOtherDates(MaterialCalendarView.SHOW_OUT_OF_RANGE);
+
+       //달력에 토요일, 일요일, 현재 날짜 표시하기 위해 참조
         materialCalendarView.addDecorators(
                 new SaturdayDecorator(),
                 new SundayDecorator(),
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        new ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
+
+        // 만약 선택되었다면
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 추가 버튼 누르면 수행 -> 선택된 날짜 리스트 intent로 보내고 inputActivity 시작함.
+        // 엑티비티 수준이면 이부분 손봐야 할거 같습니다.
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 삭제 버튼일때,
         clear_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 이부분은 건들지 마세요.
+     */
     private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
 
         String[] Time_Result;
@@ -132,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
              * 특정날짜 달력에 점 표시 해주는 곳
              * 월을 0이 1월 년, 일은 그대로 한다.
              * String 문자열인 Time_Result 를 받아와서 ,를 기준으로 자르고 String을 int로 변환
+             * 아직 안씀.
              */
 
             for(int i = 0; i < Time_Result.length; i++) {
@@ -147,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
             return dates;
         }
 
+        /**
+         * 이것도 건들지 마세요!
+         */
         @Override
         protected void onPostExecute(List<CalendarDay> calendarDays) {
             super.onPostExecute(calendarDays);

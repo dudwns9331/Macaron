@@ -27,8 +27,9 @@ import yj.p.macaron.add.Work_date;
 public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.ViewHolder>
         implements ItemTouchHelperListener, OnDialogListener, OnWorkDateClickListener{
 
+    // 선택된 아이템을 위해서 사용
     private SparseBooleanArray mSelectedItems = new SparseBooleanArray(0);
-    ArrayList<Work_date> items = new ArrayList<>();
+    ArrayList<Work_date> items = new ArrayList<>();     // 리스트에 들어있는 원소들
     Context context;
     OnWorkDateClickListener listener;
 
@@ -43,8 +44,11 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
         View itemView = inflater.inflate(R.layout.date_item, viewGroup, false);
 
         return new ViewHolder(itemView, this);
+
+        // 뷰 생성해주기
     }
 
+    // 바인드
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Work_date item = items.get(position);
@@ -99,7 +103,6 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
         }
         mSelectedItems.clear();
     }
-
 
     @Override
     public boolean onItemMove(int from_position, int to_position) {
@@ -165,12 +168,14 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
 
         public ViewHolder(View item, final OnWorkDateClickListener listener) {
             super(item);
+            // 여기있는 텍스트뷰들이 아이템 하나에 저장되는겁니다.
             textView = item.findViewById(R.id.year_data);
             textView2 = item.findViewById(R.id.month_data);
             textView3 = item.findViewById(R.id.day_data);
             textView4 = item.findViewById(R.id.name);
             textView5 = item.findViewById(R.id.time);
 
+            // 눌렀을때 선택되게함.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
