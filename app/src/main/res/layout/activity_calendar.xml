@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         app:mcv_selectionColor="#6334B5"
         app:mcv_arrowColor="@android:color/holo_red_dark"
-        app:mcv_showOtherDates="out_of_range" />
+        app:mcv_showOtherDates="defaults" />
 
     <LinearLayout
         android:layout_width="wrap_content"

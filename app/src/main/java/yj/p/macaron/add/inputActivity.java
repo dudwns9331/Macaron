@@ -8,18 +8,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Objects;
 
 import yj.p.macaron.R;
-import yj.p.macaron.add.Work_date;
-import yj.p.macaron.add.Work_date_adpater;
 
 public class inputActivity extends AppCompatActivity {
 
@@ -28,6 +27,8 @@ public class inputActivity extends AppCompatActivity {
 
     Button select_all_button;
     Button delete_button;
+
+    public static ArrayList<String> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,10 @@ public class inputActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         Intent intent = getIntent();
-        ArrayList<String> data = (ArrayList<String>) intent.getSerializableExtra("work_data");
+        data = (ArrayList<String>) intent.getSerializableExtra("work_data");
+
+        assert data != null;
+        Collections.sort(data);
 
         assert data != null;
         for(int i = 0; i < data.size(); i++) {
@@ -58,6 +62,7 @@ public class inputActivity extends AppCompatActivity {
             int dayy = Integer.parseInt(result[2]);
             String worker = dayy + "일 근무자";
             Work_date work_date = new Work_date(year, month, dayy, worker);
+            work_date.setWork_time("근무 시간");
             date_adpater.addItem(work_date);
         }
         

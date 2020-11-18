@@ -5,6 +5,7 @@ public class Work_date {
     int month;
     int date;
     String worker;
+    String work_time;
 
     public Work_date(String worker) {
         this.worker = worker;
@@ -15,6 +16,14 @@ public class Work_date {
         this.month = month;
         this.date = date;
         this.worker = worker;
+    }
+
+    public String getWork_time() {
+        return work_time;
+    }
+
+    public void setWork_time(String work_time) {
+        this.work_time = work_time;
     }
 
     public int getYear() {

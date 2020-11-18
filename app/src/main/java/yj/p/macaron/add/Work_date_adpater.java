@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import yj.p.macaron.R;
@@ -159,6 +161,7 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
         TextView textView2;
         TextView textView3;
         TextView textView4;
+        TextView textView5;
 
         public ViewHolder(View item, final OnWorkDateClickListener listener) {
             super(item);
@@ -166,6 +169,7 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
             textView2 = item.findViewById(R.id.month_data);
             textView3 = item.findViewById(R.id.day_data);
             textView4 = item.findViewById(R.id.name);
+            textView5 = item.findViewById(R.id.time);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,6 +187,7 @@ public class Work_date_adpater extends RecyclerView.Adapter<Work_date_adpater.Vi
             textView2.setText(String.valueOf(item.getMonth()));
             textView3.setText(String.valueOf(item.getDate()));
             textView4.setText(String.valueOf(item.getWorker()));
+            textView5.setText(String.valueOf(item.getWork_time()));
         }
     }
 }
