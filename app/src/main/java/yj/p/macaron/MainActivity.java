@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                         String shot_Day = Year + "," + Month + "," + Day;
                         selected_list.add(shot_Day);
-                        Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
                     }
                     count++;
                 }
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), inputActivity.class);
                 order_date(selected_list);
                 intent.putExtra("work_data", selected_list);
-                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
         });

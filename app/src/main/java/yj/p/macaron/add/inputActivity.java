@@ -15,6 +15,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 import yj.p.macaron.R;
+import yj.p.macaron.view_cal.list_fragment;
 import yj.p.macaron.view_cal.view_work_information;
 
 public class inputActivity extends AppCompatActivity {
@@ -27,7 +28,7 @@ public class inputActivity extends AppCompatActivity {
     Button save_button;
 
     public static ArrayList<String> data;
-
+    public static Work_date_adapter date_adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +50,12 @@ public class inputActivity extends AppCompatActivity {
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         // 어댑터 추가
-        final Work_date_adapter date_adpater = new Work_date_adapter(this);
+        date_adapter = new Work_date_adapter(this);
         // 어댑터 보여주기
-        recyclerView.setAdapter(date_adpater);
+        recyclerView.setAdapter(date_adapter);
 
         // 스와이프, 터치 관련 인터페이스, 클래스 활용 이거는 건드시면 안됩니다.
-        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(date_adpater));
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(date_adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         // 메인 엑티비티(달력) 에서 intent로 값 불러옴
@@ -64,28 +65,28 @@ public class inputActivity extends AppCompatActivity {
         assert data != null;
         for(int i = 0; i < data.size(); i++) {
             // , 으로 구분된 날짜 하나씩 찢기
-            String result[] = data.get(i).split(",");
+            String[] result = data.get(i).split(",");
             int year = Integer.parseInt(result[0]);
             int month = Integer.parseInt(result[1]);
             int dayy = Integer.parseInt(result[2]);
             String worker = dayy + "일 근무자";
             Work_date work_date = new Work_date(year, month, dayy, worker);
             work_date.setWork_time("근무 시간");
-            date_adpater.addItem(work_date);
+            date_adapter.addItem(work_date);
         }
 
         // 삭제 버튼 눌렸을때, 삭제
         delete_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int i = date_adpater.getItemCount()-1; i >=0; i--) {
-                    if(date_adpater.isItemSelected(i)) {
-                        date_adpater.deleteItem(date_adpater.getItem(i));
-                        date_adpater.notifyItemRemoved(i);
-                        date_adpater.notifyItemRangeChanged(i, date_adpater.getItemCount());
+                for(int i = date_adapter.getItemCount()-1; i >=0; i--) {
+                    if(date_adapter.isItemSelected(i)) {
+                        date_adapter.deleteItem(date_adapter.getItem(i));
+                        date_adapter.notifyItemRemoved(i);
+                        date_adapter.notifyItemRangeChanged(i, date_adapter.getItemCount());
                     }
                 }
-                date_adpater.clearSelectedItem();
+                date_adapter.clearSelectedItem();
             }
         });
 
@@ -93,8 +94,8 @@ public class inputActivity extends AppCompatActivity {
         select_all_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int i = 0; i < date_adpater.getItemCount(); i++)
-                date_adpater.toggleItemSelected(i);
+                for(int i = 0; i < date_adapter.getItemCount(); i++)
+                    date_adapter.toggleItemSelected(i);
             }
         });
 
@@ -103,6 +104,11 @@ public class inputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), view_work_information.class);
+                list_fragment list_fragment = new list_fragment();
+
+                Bundle bundle = new Bundle(1);
+                bundle.putStringArrayList("work_data", data);
+                list_fragment.setArguments(bundle);
                 intent.putExtra("work_data", data);
                 startActivity(intent);
             }

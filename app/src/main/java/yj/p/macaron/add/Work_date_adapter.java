@@ -16,11 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import yj.p.macaron.R;
 
 public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.ViewHolder>
-        implements ItemTouchHelperListener, OnDialogListener, OnWorkDateClickListener{
+        implements ItemTouchHelperListener, OnDialogListener, OnWorkDateClickListener {
 
     // 선택된 아이템을 위해서 사용
     private SparseBooleanArray mSelectedItems = new SparseBooleanArray(0);
@@ -63,7 +64,10 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
     public void addItem(Work_date item) {
         items.add(item);
     }
-    public void deleteItem(Work_date item) { items.remove(item); }
+
+    public void deleteItem(Work_date item) {
+        items.remove(item);
+    }
 
     public void setItems(ArrayList<Work_date> items) {
         this.items = items;
@@ -72,6 +76,7 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
     public Work_date getItem(int position) {
         return items.get(position);
     }
+
     public void setItem(int position, Work_date item) {
         items.set(position, item);
     }
@@ -116,16 +121,16 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
 
     @Override
     public void onLeftClick(int position, RecyclerView.ViewHolder viewHolder) {
-        CustomDialog dialog = new CustomDialog(context,position, items.get(position));
+        CustomDialog dialog = new CustomDialog(context, position, items.get(position));
         DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        WindowManager.LayoutParams wm = dialog.getWindow().getAttributes();
+        WindowManager.LayoutParams wm = Objects.requireNonNull(dialog.getWindow()).getAttributes();
         wm.copyFrom(dialog.getWindow().getAttributes());
-        wm.width = (int)(width * 0.7);
-        wm.height = height/3;
+        wm.width = (int) (width * 0.7);
+        wm.height = height / 3;
 
         dialog.setDialogListener(this);
         dialog.show();
@@ -145,7 +150,7 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
 
     @Override
     public void onItemClick(ViewHolder holder, View view, int position) {
-        if(listener != null) {
+        if (listener != null) {
             listener.onItemClick(holder, view, position);
         }
     }
@@ -154,7 +159,7 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         this.listener = listener;
     }
 
-     public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         TextView textView2;
         TextView textView3;

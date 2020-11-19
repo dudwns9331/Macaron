@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -33,6 +34,9 @@ public class view_work_information extends AppCompatActivity {
 
     MaterialCalendarView materialCalendarView;
     ArrayList<String> selected_list;
+    list_fragment list_fragment;
+
+    public static int selected_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class view_work_information extends AppCompatActivity {
         Intent intent = getIntent();
         selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data"); // 배열안에 날짜 들어가 있음.
 
+        list_fragment = (list_fragment) getSupportFragmentManager().findFragmentById(R.id.list_fragment);
 
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
@@ -63,10 +68,18 @@ public class view_work_information extends AppCompatActivity {
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, final boolean selected) {
+                selected_date = date.getDay();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        list_fragment.recyclerView.smoothScrollToPosition(selected_date - 1);
+                    }
+                }, 700);
                 // 날짜 클릭시 해당 근무자 시간표 나오기.
+//                list_fragment.show_info();
                 materialCalendarView.clearSelection();
-                Toast.makeText(view_work_information.this, "test", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view_work_information.this, "test", Toast.LENGTH_SHORT).show();
             }
         });
 

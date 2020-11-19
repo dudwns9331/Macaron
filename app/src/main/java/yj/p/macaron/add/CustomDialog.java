@@ -6,10 +6,13 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import java.util.Objects;
@@ -41,6 +44,12 @@ public class CustomDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         (Objects.requireNonNull(getWindow())).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.customdialog);
+
+        LinearLayout scrollView = findViewById(R.id.add_list);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.info, scrollView, false);
+        scrollView.addView(viewGroup);
+        scrollView.addView(viewGroup);
 
 
         mod_name = findViewById(R.id.mod_name);
