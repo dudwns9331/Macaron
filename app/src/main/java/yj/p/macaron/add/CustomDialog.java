@@ -54,7 +54,7 @@ public class CustomDialog extends Dialog {
 
         mod_name = findViewById(R.id.mod_name);
         mod_name.setText("근무자");
-
+//
         // 근무자 추가 버튼
         Button mod_button = findViewById(R.id.mod_button);
         mod_button.setOnClickListener(new View.OnClickListener() {
