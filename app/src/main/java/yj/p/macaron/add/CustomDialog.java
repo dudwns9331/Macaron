@@ -43,14 +43,6 @@ public class CustomDialog extends Dialog {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         (Objects.requireNonNull(getWindow())).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        setContentView(R.layout.customdialog);
-
-        LinearLayout scrollView = findViewById(R.id.add_list);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.info, scrollView, false);
-        scrollView.addView(viewGroup);
-        scrollView.addView(viewGroup);
-
 
         mod_name = findViewById(R.id.mod_name);
         mod_name.setText("근무자");
