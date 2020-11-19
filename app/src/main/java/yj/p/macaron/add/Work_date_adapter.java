@@ -191,8 +191,11 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
             textView.setText(String.valueOf(item.getYear()));
             textView2.setText(String.valueOf(item.getMonth()));
             textView3.setText(String.valueOf(item.getDate()));
-            textView4.setText(String.valueOf(item.getWorker()));
-            textView5.setText(String.valueOf(item.getWork_time()));
+
+            if(!item.getWorker().equals("")) {
+                textView4.setText(String.valueOf(item.getWorkerall()));
+                textView5.setText(String.valueOf(item.getWork_timeall()));
+            }
         }
     }
 }

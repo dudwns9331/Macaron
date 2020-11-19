@@ -58,13 +58,5 @@ public class list_fragment extends Fragment {
         return rootView;
     }
 
-//    public void show_info() {
-//        if (first) {
-//            date_adapter.addItem(recent_item);
-//            recyclerView.setAdapter(date_adapter);
-//        }
-//        else
-//            date_adapter.deleteItem(recent_item);
-//
-//    }
+//    public void
 }

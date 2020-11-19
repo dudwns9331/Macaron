@@ -6,6 +6,8 @@ public class Work_date implements Comparable<Work_date> {
     int date;
     String worker;
     String work_time;
+    String d_worker;
+    String d_work_time;
 
     public Work_date(String worker) {
         this.worker = worker;
@@ -16,6 +18,8 @@ public class Work_date implements Comparable<Work_date> {
         this.month = month;
         this.date = date;
         this.worker = worker;
+        this.d_worker = "";
+        this.d_work_time = "";
     }
 
     public String getWork_time() {
@@ -57,6 +61,14 @@ public class Work_date implements Comparable<Work_date> {
     public void setWorker(String worker) {
         this.worker = worker;
     }
+
+    public void addWorker(String worker) {this.d_worker = this.d_worker + worker + "\n";}
+
+    public void addwork_time(String work_time) {this.d_work_time = d_work_time + work_time + "\n"; }
+
+    public String getWork_timeall() { return d_work_time; }
+
+    public String getWorkerall() {return d_worker;}
 
     @Override
     public int compareTo(Work_date work_date) {

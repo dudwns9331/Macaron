@@ -37,6 +37,7 @@ public class view_work_information extends AppCompatActivity {
     list_fragment list_fragment;
 
     public static int selected_date;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +66,29 @@ public class view_work_information extends AppCompatActivity {
                 new SundayDecorator(),
                 oneDayDecorator);
 
+        final ArrayList<Integer> day_list = new ArrayList<>();
+
+        for(int i = 0; i < selected_list.size(); i++) {
+            String[] result = selected_list.get(i).split(",");
+            int dayy = Integer.parseInt(result[2]);
+            day_list.add(dayy);
+        }
+
 
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, final boolean selected) {
+
+
                 selected_date = date.getDay();
+                for(int i = 0; i < selected_list.size(); i++) {
+                    if(selected_date == day_list.get(i))
+                        position = i;
+                }
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        list_fragment.recyclerView.smoothScrollToPosition(selected_date - 1);
+                        list_fragment.recyclerView.smoothScrollToPosition(position);
                     }
                 }, 700);
                 // 날짜 클릭시 해당 근무자 시간표 나오기.

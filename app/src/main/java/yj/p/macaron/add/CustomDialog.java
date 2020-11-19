@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
 import java.util.Objects;
 
 import yj.p.macaron.R;
@@ -43,20 +45,33 @@ public class CustomDialog extends Dialog {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         (Objects.requireNonNull(getWindow())).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        setContentView(R.layout.customdialog);
+
 
         mod_name = findViewById(R.id.mod_name);
-        mod_name.setText("근무자");
-//
+        mod_name.setText(null);
+
         // 근무자 추가 버튼
         Button mod_button = findViewById(R.id.mod_button);
         mod_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(listener != null) {
-                    String name = mod_name.getText().toString();
-                    date.setWorker(name);
-                    work_time = s_time + " ~ " + e_time;
-                    date.setWork_time(work_time);
+                    name = mod_name.getText().toString();
+
+                    if(!name.equals("")) {
+                        date.setWorker(name);
+                        date.addWorker(name);
+                    }
+                    else Toast.makeText(context, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, date.getWorkerall(), Toast.LENGTH_SHORT).show();
+
+                    if(s_time != null && e_time != null) {
+                        work_time = s_time + " ~ " + e_time;
+                        date.setWork_time(work_time);
+                        date.addwork_time(work_time);
+                    }
+                    else Toast.makeText(context, "시작 시간과 종료 시간을 설정 해 주세요.", Toast.LENGTH_SHORT).show();
                     listener.onFinish(position, date);
                     dismiss();
                 }
