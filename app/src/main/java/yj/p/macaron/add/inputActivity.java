@@ -13,9 +13,9 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import yj.p.macaron.R;
+import yj.p.macaron.view_cal.view_work_information;
 
 public class inputActivity extends AppCompatActivity {
 
@@ -24,6 +24,7 @@ public class inputActivity extends AppCompatActivity {
 
     Button select_all_button;
     Button delete_button;
+    Button save_button;
 
     public static ArrayList<String> data;
 
@@ -36,6 +37,10 @@ public class inputActivity extends AppCompatActivity {
         select_all_button = findViewById(R.id.select_all);
         // 지우기 버튼
         delete_button = findViewById(R.id.delete);
+
+        // 저장 버튼
+        save_button = findViewById(R.id.save);
+
 
         // 리싸이클러뷰 -> 달력에서 넣은 날짜 배열 리스트로 표혀현해서 보여줌
         recyclerView = findViewById(R.id.recyclerView);
@@ -55,9 +60,6 @@ public class inputActivity extends AppCompatActivity {
         // 메인 엑티비티(달력) 에서 intent로 값 불러옴
         Intent intent = getIntent();
         data = (ArrayList<String>) intent.getSerializableExtra("work_data"); // 배열안에 날짜 들어가 있음.
-
-        assert data != null;
-        Collections.sort(data);     // 날짜 정렬
 
         assert data != null;
         for(int i = 0; i < data.size(); i++) {
@@ -93,6 +95,16 @@ public class inputActivity extends AppCompatActivity {
             public void onClick(View view) {
                 for(int i = 0; i < date_adpater.getItemCount(); i++)
                 date_adpater.toggleItemSelected(i);
+            }
+        });
+
+
+        save_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), view_work_information.class);
+                intent.putExtra("work_data", data);
+                startActivity(intent);
             }
         });
         

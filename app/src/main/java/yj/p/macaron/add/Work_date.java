@@ -1,6 +1,6 @@
 package yj.p.macaron.add;
 
-public class Work_date {
+public class Work_date implements Comparable<Work_date> {
     int year;
     int month;
     int date;
@@ -56,5 +56,10 @@ public class Work_date {
 
     public void setWorker(String worker) {
         this.worker = worker;
+    }
+
+    @Override
+    public int compareTo(Work_date work_date) {
+        return Integer.compare(this.date, work_date.date);
     }
 }

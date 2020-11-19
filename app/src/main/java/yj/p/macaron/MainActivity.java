@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,26 +14,29 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnRangeSelectedListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import yj.p.macaron.add.inputActivity;
-import yj.p.macaron.decorators.EventDecorator;
 import yj.p.macaron.decorators.OneDayDecorator;
 import yj.p.macaron.decorators.SaturdayDecorator;
 import yj.p.macaron.decorators.SundayDecorator;
 
 public class MainActivity extends AppCompatActivity {
 
-    String time, kcal, menu;
     int Year, Month, Day;
     private final OneDayDecorator oneDayDecorator = new OneDayDecorator();
-    Cursor cursor;
     MaterialCalendarView materialCalendarView;
-
     ArrayList<String> selected_list;
+
+    public boolean mode;
+
+    private int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         materialCalendarView = findViewById(R.id.calendarView);
         Button add_button = findViewById(R.id.add_button);
         Button clear_button = findViewById(R.id.clear_button);
+        final Button select_all_range = findViewById(R.id.select_range);
+
+        mode = true;
 
         // 달력 초기 설정
         materialCalendarView.state().edit()
@@ -67,31 +70,57 @@ public class MainActivity extends AppCompatActivity {
 
       selected_list = new ArrayList<>();
 
-//        new ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
-
-
         // 만약 선택되었다면
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                 Year = date.getYear();
-                 Month = date.getMonth() + 1;
-                 Day = date.getDay();
 
-                Log.i("Year Test", Year + "");
-                Log.i("Month Test", Month + "");
-                Log.i("Day Test", Day + "");
+                if(mode) {
+                    Year = date.getYear();
+                    Month = date.getMonth() + 1;
+                    Day = date.getDay();
 
-                String shot_Day = Year + "," + Month + "," + Day;
+                    Log.i("Year Test", Year + "");
+                    Log.i("Month Test", Month + "");
+                    Log.i("Day Test", Day + "");
 
-                if(selected)  selected_list.add(shot_Day);
-                else  selected_list.remove(shot_Day);
+                    String shot_Day = Year + "," + Month + "," + Day;
 
-                Log.i("shot_Day test", shot_Day + "");
+                    if (selected) selected_list.add(shot_Day);
+                    else selected_list.remove(shot_Day);
 
-                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+
+                    Log.i("shot_Day test", shot_Day + "");
+                }
             }
         });
+
+        // 범위선택 시
+        materialCalendarView.setOnRangeSelectedListener(new OnRangeSelectedListener() {
+            @Override
+            public void onRangeSelected(@NonNull MaterialCalendarView widget, @NonNull List<CalendarDay> dates) {
+
+                if(count == 1) {
+                    selected_list.clear();
+                    count = 0;
+                }
+
+                if (!mode) {
+                    for (int i = 0; i < dates.size(); i++) {
+                        Year = dates.get(i).getYear();
+                        Month = dates.get(i).getMonth() + 1;
+                        Day = dates.get(i).getDay();
+
+                        String shot_Day = Year + "," + Month + "," + Day;
+                        selected_list.add(shot_Day);
+                        Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                    count++;
+                }
+            }
+        });
+
 
         // 추가 버튼 누르면 수행 -> 선택된 날짜 리스트 intent로 보내고 inputActivity 시작함.
         // 엑티비티 수준이면 이부분 손봐야 할거 같습니다.
@@ -99,7 +128,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), inputActivity.class);
+                order_date(selected_list);
                 intent.putExtra("work_data", selected_list);
+                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
         });
@@ -108,66 +139,50 @@ public class MainActivity extends AppCompatActivity {
         clear_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                selected_list.clear();
+                materialCalendarView.clearSelection();
+                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        select_all_range.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mode) {
+                    materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_RANGE);
+                    select_all_range.setText("다중 선택");
+                    mode = false;
+                    count = 0;
+                }
+                else {
+                    materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
+                    select_all_range.setText("범위 선택");
+                    mode = true;
+                }
             }
         });
     }
 
     /**
-     * 이부분은 건들지 마세요.
+     * 날짜순으로 정렬한다.
+     * @param list 선택된 날짜 리스트
      */
-    private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
+    public void order_date(ArrayList<String> list) {
+        Collections.sort(list, new Comparator<String>() {
+            @Override
+            public int compare(String t1, String t2) {
+                String[] result1 = t1.split(",");
+                String[] result2 = t2.split(",");
 
-        String[] Time_Result;
+                StringBuilder time1 = new StringBuilder();
+                StringBuilder time2 = new StringBuilder();
 
-        ApiSimulator(String[] Time_Result) {
-            this.Time_Result = Time_Result;
-        }
-
-        @Override
-        protected List<CalendarDay> doInBackground(Void... voids) {
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                for(int i = 0; i < 3; i++) {
+                    time1.append(result1[i]);
+                    time2.append(result2[i]);
+                }
+                return Integer.compare(Integer.parseInt(time1.toString()), Integer.parseInt(time2.toString()));
             }
-
-            Calendar calendar = Calendar.getInstance();
-            ArrayList<CalendarDay> dates = new ArrayList<>();
-
-
-            /**
-             * 특정날짜 달력에 점 표시 해주는 곳
-             * 월을 0이 1월 년, 일은 그대로 한다.
-             * String 문자열인 Time_Result 를 받아와서 ,를 기준으로 자르고 String을 int로 변환
-             * 아직 안씀.
-             */
-
-            for(int i = 0; i < Time_Result.length; i++) {
-                CalendarDay day = CalendarDay.from(calendar);
-                String[] time = Time_Result[i].split(",");
-                int year = Integer.parseInt(time[0]);
-                int month = Integer.parseInt(time[1]);
-                int dayy = Integer.parseInt(time[2]);
-
-                dates.add(day);
-                calendar.set(year,month -1, dayy);
-            }
-            return dates;
-        }
-
-        /**
-         * 이것도 건들지 마세요!
-         */
-        @Override
-        protected void onPostExecute(List<CalendarDay> calendarDays) {
-            super.onPostExecute(calendarDays);
-
-            if(isFinishing()) {
-                return;
-            }
-            materialCalendarView.addDecorator(new EventDecorator(Color.GREEN, calendarDays, MainActivity.this));
-        }
+        });
     }
 }

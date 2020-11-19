@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
@@ -13,16 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import yj.p.macaron.R;
-import yj.p.macaron.add.Work_date;
 
 /**
  * inputActivity 에서 스와이프 하고 수정 버튼을 누르면 수행되는 클래스 (다이얼로그)
