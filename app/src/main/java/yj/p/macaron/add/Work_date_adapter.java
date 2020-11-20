@@ -23,12 +23,15 @@ import yj.p.macaron.R;
 public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.ViewHolder>
         implements ItemTouchHelperListener, OnDialogListener, OnWorkDateClickListener {
 
+    private int count = 0;
+
     // 선택된 아이템을 위해서 사용
     private SparseBooleanArray mSelectedItems = new SparseBooleanArray(0);
     ArrayList<Work_date> items = new ArrayList<>();     // 리스트에 들어있는 원소들
     Context context;
     OnWorkDateClickListener listener;
 
+    // context 전달
     public Work_date_adapter(Context context) {
         this.context = context;
     }
@@ -38,21 +41,20 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.date_item, viewGroup, false);
-
         return new ViewHolder(itemView, this);
-
         // 뷰 생성해주기
     }
 
-    // 바인드
+    // 리싸이클러 뷰를 그려주는 함수
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Work_date item = items.get(position);
         viewHolder.setItem(item);
+        // 아이템이 선택되었다면
         if (isItemSelected(position)) {
-            viewHolder.itemView.setBackgroundColor(Color.CYAN);
+            viewHolder.itemView.setBackgroundColor(Color.CYAN); // 이 색으로 선택된거 배경 표시
         } else {
-            viewHolder.itemView.setBackgroundColor(Color.WHITE);
+            viewHolder.itemView.setBackgroundColor(Color.BLUE); // 리스트의 배경 색 설정
         }
     }
 
@@ -81,6 +83,7 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         items.set(position, item);
     }
 
+    // 리스트가 선택된된건지 아닌지 토글로 설정해주는 함수
     public void toggleItemSelected(int position) {
         if (mSelectedItems.get(position, false)) {
             mSelectedItems.delete(position);
@@ -90,10 +93,12 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         notifyItemChanged(position);
     }
 
+    // 아이템이 선택되었는지 아닌지를 알려줌
     public boolean isItemSelected(int position) {
         return mSelectedItems.get(position, false);
     }
 
+    // 선택된거 모두 취소함
     public void clearSelectedItem() {
         int position;
         for (int i = 0; i < mSelectedItems.size(); i++) {
@@ -104,6 +109,7 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         mSelectedItems.clear();
     }
 
+    // 아이템이 이동했을때 업데이트 시켜주는 함수 삭제, 추가 등등
     @Override
     public boolean onItemMove(int from_position, int to_position) {
         Work_date work_date = items.get(from_position);
@@ -113,14 +119,21 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         return true;
     }
 
+    // 아이템을 왼쪽이나 오른쪽으로 스와이프 한 경우
     @Override
     public void onItemSwipe(int position) {
         items.remove(position);
         notifyItemRemoved(position);
     }
 
+    // 스와이프 후 왼쪽에 수정 버튼을 누르면 수행되는 함수
+    // 수정 클릭 시 수정 다이얼로그 띄워줌
+
     @Override
     public void onLeftClick(int position, RecyclerView.ViewHolder viewHolder) {
+
+        count++;
+
         CustomDialog dialog = new CustomDialog(context, position, items.get(position));
         DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
 
@@ -134,20 +147,24 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
 
         dialog.setDialogListener(this);
         dialog.show();
+
     }
 
+    // 오른쪽에 있는 버튼 클릭시 삭제
     @Override
     public void onRightClick(int position, RecyclerView.ViewHolder viewHolder) {
         items.remove(position);
         notifyItemRemoved(position);
     }
 
+    // 아이템 설정이 끝나면 업데이트
     @Override
     public void onFinish(int position, Work_date work_date) {
         items.set(position, work_date);
         notifyItemChanged(position);
     }
 
+    // 아이템이 클릭 되었을 때,
     @Override
     public void onItemClick(ViewHolder holder, View view, int position) {
         if (listener != null) {
@@ -159,6 +176,10 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
         this.listener = listener;
     }
 
+
+    /**
+     * 뷰 홀더 보이는 뷰들을 조정함
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         TextView textView2;
@@ -181,20 +202,26 @@ public class Work_date_adapter extends RecyclerView.Adapter<Work_date_adapter.Vi
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     toggleItemSelected(position);
-                    Log.d("test", "position = " + position);
-                    Toast.makeText(context, mSelectedItems.toString(), Toast.LENGTH_SHORT).show();
+//                    Log.d("test", "position = " + position);
+//                    Toast.makeText(context, mSelectedItems.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
+        // 리싸이클러 뷰에서 보이는 뷰들 설정
         public void setItem(Work_date item) {
             textView.setText(String.valueOf(item.getYear()));
             textView2.setText(String.valueOf(item.getMonth()));
             textView3.setText(String.valueOf(item.getDate()));
-
-            if(!item.getWorker().equals("")) {
-                textView4.setText(String.valueOf(item.getWorkerall()));
-                textView5.setText(String.valueOf(item.getWork_timeall()));
+            if(count == 0) {
+                textView4.setText(String.valueOf(item.getWorker()));
+                textView5.setText(String.valueOf(item.getWork_time()));
+            } else {
+                if(!item.getWorker().equals("")) {
+                    textView4.setText(String.valueOf(item.getWorkerall()));
+                    textView5.setText(String.valueOf(item.getWork_timeall()));
+                    Toast.makeText(context, item.getWork_timeall(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

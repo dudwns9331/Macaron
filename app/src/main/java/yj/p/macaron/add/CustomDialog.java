@@ -90,12 +90,12 @@ public class CustomDialog extends Dialog {
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                         s_Hour = hourOfDay;
                         s_Minute = minute;
-                        s_time = s_Hour + "시 " + s_Minute + " 분 ";
+                        s_time = s_Hour + "시" + s_Minute + "분";
                         start_time.setText(s_time);
                     }
 
                 }, s_Hour, s_Minute, false);
-                timePickerDialog.show();
+                timePickerDialog.show();                    
             }
         });
 

@@ -99,7 +99,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                     itemView.getBottom() - 40);
             p.setColor(Color.BLUE);
             c.drawRoundRect(leftButton, corners, corners, p);
-            drawText("수정", c, leftButton, p);
+            drawText("추가", c, leftButton, p);
             buttionInstance = leftButton;
             // 왼쪽으로 스와이프 했을때 (오른쪽 버튼이 보여지게 될 경우)
         } else if (buttonsShowedState == ButtonsState.RIGHT_VISIBLE) {

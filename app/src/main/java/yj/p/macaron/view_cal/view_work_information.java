@@ -95,6 +95,7 @@ public class view_work_information extends AppCompatActivity {
 //                list_fragment.show_info();
                 materialCalendarView.clearSelection();
 //                Toast.makeText(view_work_information.this, "test", Toast.LENGTH_SHORT).show();
+
             }
         });
 

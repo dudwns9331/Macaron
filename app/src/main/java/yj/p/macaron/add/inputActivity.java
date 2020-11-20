@@ -23,24 +23,21 @@ public class inputActivity extends AppCompatActivity {
     ItemTouchHelper itemTouchHelper;
     RecyclerView recyclerView;
 
-    Button select_all_button;
-    Button delete_button;
-    Button save_button;
+    Button select_all_button;       // 모두 선택 버튼
+    Button delete_button;           // 지우기 버튼
+    Button save_button;             // 저장 버튼
 
     public static ArrayList<String> data;
     public static Work_date_adapter date_adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
 
-        // 선택 버튼
-        select_all_button = findViewById(R.id.select_all);
-        // 지우기 버튼
-        delete_button = findViewById(R.id.delete);
-
-        // 저장 버튼
-        save_button = findViewById(R.id.save);
+        select_all_button = findViewById(R.id.select_all);      // 선택 버튼
+        delete_button = findViewById(R.id.delete);              // 지우기 버튼
+        save_button = findViewById(R.id.save);                  // 저장 버튼
 
 
         // 리싸이클러뷰 -> 달력에서 넣은 날짜 배열 리스트로 표혀현해서 보여줌
@@ -54,7 +51,7 @@ public class inputActivity extends AppCompatActivity {
         // 어댑터 보여주기
         recyclerView.setAdapter(date_adapter);
 
-        // 스와이프, 터치 관련 인터페이스, 클래스 활용 이거는 건드시면 안됩니다.
+        // 스와이프, 터치 관련 인터페이스, 클래스 활용
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(date_adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -68,11 +65,11 @@ public class inputActivity extends AppCompatActivity {
             String[] result = data.get(i).split(",");
             int year = Integer.parseInt(result[0]);
             int month = Integer.parseInt(result[1]);
-            int dayy = Integer.parseInt(result[2]);
-            String worker = dayy + "일 근무자";
-            Work_date work_date = new Work_date(year, month, dayy, worker);
+            int day = Integer.parseInt(result[2]);
+            String worker = day + "일 근무자";
+            Work_date work_date = new Work_date(year, month, day,  worker);
             work_date.setWork_time("근무 시간");
-            date_adapter.addItem(work_date);
+            date_adapter.addItem(work_date);    // work_date 객체에  year, month, day, worker 의 값이 들어간다.
         }
 
         // 삭제 버튼 눌렸을때, 삭제
@@ -80,13 +77,13 @@ public class inputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 for(int i = date_adapter.getItemCount()-1; i >=0; i--) {
-                    if(date_adapter.isItemSelected(i)) {
-                        date_adapter.deleteItem(date_adapter.getItem(i));
-                        date_adapter.notifyItemRemoved(i);
-                        date_adapter.notifyItemRangeChanged(i, date_adapter.getItemCount());
+                    if(date_adapter.isItemSelected(i)) {    // 리스트에 있는 날짜가 선택되었을 때,
+                        date_adapter.deleteItem(date_adapter.getItem(i));   // 리스트에 아이템을 지운다.
+                        date_adapter.notifyItemRemoved(i);                  // 지운 날짜 업데이트
+                        date_adapter.notifyItemRangeChanged(i, date_adapter.getItemCount()); // 지운 날짜에 대해서 전체 업데이트
                     }
                 }
-                date_adapter.clearSelectedItem();
+                date_adapter.clearSelectedItem();   // 지우기 되면 선택된 모든 효과는 사라진다.
             }
         });
 
@@ -95,25 +92,22 @@ public class inputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 for(int i = 0; i < date_adapter.getItemCount(); i++)
-                    date_adapter.toggleItemSelected(i);
+                    date_adapter.toggleItemSelected(i); // 선택된 리스트 모두 삭제
             }
         });
 
 
+        /**
+         * 저장 버튼이 눌렸을 때, list_fragment 프래그먼트에 어댑터에 추가했던 리스트를 그대로 전달한다.
+         */
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), view_work_information.class);
-                list_fragment list_fragment = new list_fragment();
-
-                Bundle bundle = new Bundle(1);
-                bundle.putStringArrayList("work_data", data);
-                list_fragment.setArguments(bundle);
-                intent.putExtra("work_data", data);
+                intent.putExtra("work_data", data);     // 저장했던, 데이터 그대로 전달
                 startActivity(intent);
             }
         });
-        
         setUpRecyclerView();
     }
 

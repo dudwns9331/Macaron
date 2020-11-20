@@ -12,9 +12,11 @@
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:mcv_tileHeight="match_parent"
         app:mcv_arrowColor="@android:color/holo_red_dark"
-        app:mcv_showOtherDates="out_of_range" />
+        app:mcv_showOtherDates="all" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -29,23 +31,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="추가"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/select_range"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="범위 선택"
-            android:textSize="30sp"
+            android:textSize="20sp"
             />
         <Button
             android:id="@+id/clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="지우기"
-            android:textSize="30sp" />
-
-
+            android:textSize="20sp" />
 
     </LinearLayout>
 

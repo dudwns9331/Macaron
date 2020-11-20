@@ -50,11 +50,6 @@ public class list_fragment extends Fragment {
         date_adapter = inputActivity.date_adapter;
         recyclerView.setAdapter(date_adapter);
 
-//        for(int i = 0; i < work_list.size(); i++) {
-//            date_adapter.addItem(date_adapter.getItem(i));
-//        }
-
-
         return rootView;
     }
 

@@ -1,13 +1,20 @@
 package yj.p.macaron.add;
 
 public class Work_date implements Comparable<Work_date> {
-    int year;
-    int month;
-    int date;
-    String worker;
-    String work_time;
-    String d_worker;
-    String d_work_time;
+    int year; // 년
+    int month; // 월
+    int date; // 일
+
+    /**
+     * 객체마다 저장되는 데이터 -> "d_worker" 근무자 + "\n" 형식
+     *                        -> "d_work_time" 0시 0분 ~ 0시 0분 + "\n"
+     */
+
+    String worker;      // 근무자
+    String work_time;       // 근무 시간
+    String d_worker;        // 모든 근무자
+    String d_work_time;     // 모든 근무 시간
+
 
     public Work_date(String worker) {
         this.worker = worker;
