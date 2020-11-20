@@ -1,13 +1,16 @@
 package yj.p.macaron;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
 // import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 // import android.widget.Toast;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -22,10 +25,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import yj.p.macaron.add.Work_date_adapter;
 import yj.p.macaron.add.inputActivity;
 import yj.p.macaron.decorators.OneDayDecorator;
 import yj.p.macaron.decorators.SaturdayDecorator;
 import yj.p.macaron.decorators.SundayDecorator;
+import yj.p.macaron.view_cal.list_fragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     private int count = 0;      // 날짜 범위 선택시 첫번째 선택인지, 두번째 선택인지 지정.
 
+    list_fragment list_fragment;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data");
+}
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +62,13 @@ public class MainActivity extends AppCompatActivity {
         Button clear_button = findViewById(R.id.clear_button);      // 선택 해제 버튼
         final Button select_all_range = findViewById(R.id.select_range); // 범위선택 버튼
 
+        list_fragment = new list_fragment();
+
         mode = true;
+
+        Intent intent = getIntent();
+        selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data");
+
 
         // 달력 초기 설정
         materialCalendarView.state().edit()
@@ -133,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
                 input_activity.putExtra("work_data", selected_list);        // "work_data" 로 선택된 리스트 넘김
 
 //                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
-                startActivity(input_activity); // inputActivity 시작
+                startActivityForResult(input_activity, 100); // inputActivity 시작
+                finish();
             }
         });
 
@@ -164,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Toast.makeText(this, selected_list.toString(), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -187,5 +210,18 @@ public class MainActivity extends AppCompatActivity {
                 return Integer.compare(Integer.parseInt(time1.toString()), Integer.parseInt(time2.toString()));
             }
         });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 100) {
+            assert data != null;
+            selected_list = (ArrayList<String>) data.getSerializableExtra("work_data"); // 배열안에 날짜 들어가 있음.
+        }
+        Toast.makeText(this, selected_list.toString(), Toast.LENGTH_SHORT).show();
+
     }
 }

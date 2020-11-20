@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 
+import yj.p.macaron.MainActivity;
 import yj.p.macaron.R;
 import yj.p.macaron.view_cal.list_fragment;
 import yj.p.macaron.view_cal.view_work_information;
@@ -28,6 +30,7 @@ public class inputActivity extends AppCompatActivity {
     Button save_button;             // 저장 버튼
 
     public static ArrayList<String> data;
+    @SuppressLint("StaticFieldLeak")
     public static Work_date_adapter date_adapter;
 
     @Override
@@ -103,9 +106,14 @@ public class inputActivity extends AppCompatActivity {
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), view_work_information.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                        .setAction(Intent.ACTION_MAIN)
+//                        .addCategory(Intent.CATEGORY_LAUNCHER)
+//                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("work_data", data);     // 저장했던, 데이터 그대로 전달
+              //  setResult(100, intent);
                 startActivity(intent);
+
             }
         });
         setUpRecyclerView();
