@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private final OneDayDecorator oneDayDecorator = new OneDayDecorator(); // 현재 날짜를 커스텀하기 위한 데코레이터
     MaterialCalendarView materialCalendarView;
     ArrayList<String> selected_list;            // 선택된 날짜 String 값으로 저장하는 리스트
+    ArrayList<String> selected_list2;            // 선택된 날짜 String 값으로 저장하는 리스트
+
 
     public boolean mode;            // 날짜를 선택하는 모드가 무엇인지 -> 다중 선택모드(여러개 따로 선택), 범위선택(처음과 끝까지)
 
@@ -46,11 +48,15 @@ public class MainActivity extends AppCompatActivity {
     list_fragment list_fragment;
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data");
-}
-
+    protected void onResume() {
+        super.onResume();
+        try {
+            selected_list2 =  (ArrayList<String>) getIntent().getSerializableExtra("work_data_new");
+            Toast.makeText(this, selected_list2.toString(), Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         mode = true;
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data");
 
 
@@ -151,10 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent input_activity = new Intent(getApplicationContext(), inputActivity.class);   // 인텐트 생성
                 order_date(selected_list);      // 선택된 날짜 이른 날짜부터 정렬
                 input_activity.putExtra("work_data", selected_list);        // "work_data" 로 선택된 리스트 넘김
-
-//                Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
-                startActivityForResult(input_activity, 100); // inputActivity 시작
-                finish();
+                input_activity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(input_activity);
             }
         });
 
@@ -185,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        Toast.makeText(this, selected_list.toString(), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -210,18 +212,5 @@ public class MainActivity extends AppCompatActivity {
                 return Integer.compare(Integer.parseInt(time1.toString()), Integer.parseInt(time2.toString()));
             }
         });
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode == 100) {
-            assert data != null;
-            selected_list = (ArrayList<String>) data.getSerializableExtra("work_data"); // 배열안에 날짜 들어가 있음.
-        }
-        Toast.makeText(this, selected_list.toString(), Toast.LENGTH_SHORT).show();
-
     }
 }

@@ -22,6 +22,7 @@ import yj.p.macaron.view_cal.view_work_information;
 
 public class inputActivity extends AppCompatActivity {
 
+
     ItemTouchHelper itemTouchHelper;
     RecyclerView recyclerView;
 
@@ -107,13 +108,9 @@ public class inputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                        .setAction(Intent.ACTION_MAIN)
-//                        .addCategory(Intent.CATEGORY_LAUNCHER)
-//                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("work_data", data);     // 저장했던, 데이터 그대로 전달
-              //  setResult(100, intent);
+                intent.putExtra("work_data_new", data);
+                intent.setFlags((Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 startActivity(intent);
-
             }
         });
         setUpRecyclerView();
