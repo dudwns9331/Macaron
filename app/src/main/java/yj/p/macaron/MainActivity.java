@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 // import android.util.Log;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,14 +27,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import yj.p.macaron.add.Work_date_adapter;
 import yj.p.macaron.add.inputActivity;
+import yj.p.macaron.decorators.EventDecorator;
 import yj.p.macaron.decorators.OneDayDecorator;
 import yj.p.macaron.decorators.SaturdayDecorator;
 import yj.p.macaron.decorators.SundayDecorator;
 import yj.p.macaron.view_cal.list_fragment;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,21 +48,51 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> selected_list;            // 선택된 날짜 String 값으로 저장하는 리스트
     ArrayList<String> selected_list2;            // 선택된 날짜 String 값으로 저장하는 리스트
 
+    ArrayList<Integer> day_list;
 
+    private int selected_date;
+    private int position;
     public boolean mode;            // 날짜를 선택하는 모드가 무엇인지 -> 다중 선택모드(여러개 따로 선택), 범위선택(처음과 끝까지)
 
     private int count = 0;      // 날짜 범위 선택시 첫번째 선택인지, 두번째 선택인지 지정.
 
     list_fragment list_fragment;
 
+    Button add_button;
+    Button select_all_range;
+    Button clear_button;
+    Button modify_button;
+
+    private long time= 0;
+
+    boolean is_modify;
+
     @Override
     protected void onResume() {
         super.onResume();
         try {
-            selected_list2 =  (ArrayList<String>) getIntent().getSerializableExtra("work_data_new");
+            selected_list2 = (ArrayList<String>) getIntent().getSerializableExtra("work_data_new");
             Toast.makeText(this, selected_list2.toString(), Toast.LENGTH_SHORT).show();
-        }
-        catch (Exception e){
+            new ApiSimulator(selected_list2).executeOnExecutor(Executors.newSingleThreadExecutor());
+
+            day_list = new ArrayList<>();
+
+            if (selected_list2.size() != 0) {
+                for (int i = 0; i < selected_list2.size(); i++) {
+                    String[] result = selected_list2.get(i).split(",");
+                    int dayy = Integer.parseInt(result[2]);
+                    day_list.add(dayy);
+                }
+            }
+
+            select_all_range.setVisibility(View.GONE);
+            add_button.setVisibility(View.GONE);
+            clear_button.setVisibility(View.GONE);
+            modify_button.setVisibility(View.VISIBLE);
+            materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_SINGLE);
+            is_modify = true;
+        } catch (Exception e) {
+
         }
     }
 
@@ -64,23 +102,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
 
         materialCalendarView = findViewById(R.id.calendarView);     // 캘린더 아이디 지정
-        Button add_button = findViewById(R.id.add_button);          // 추가 버튼
-        Button clear_button = findViewById(R.id.clear_button);      // 선택 해제 버튼
-        final Button select_all_range = findViewById(R.id.select_range); // 범위선택 버튼
-
-        list_fragment = new list_fragment();
+        add_button = findViewById(R.id.add_button);          // 추가 버튼
+        clear_button = findViewById(R.id.clear_button);      // 선택 해제 버튼
+        select_all_range = findViewById(R.id.select_range); // 범위선택 버튼
+        modify_button = findViewById(R.id.modify_button);
 
         mode = true;
 
         final Intent intent = getIntent();
         selected_list = (ArrayList<String>) intent.getSerializableExtra("work_data");
 
+        list_fragment = (list_fragment) getSupportFragmentManager().findFragmentById(R.id.list_fragment);
 
         // 달력 초기 설정
         materialCalendarView.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setMinimumDate(CalendarDay.from(2020,0,1))     // 달력 표시 최소범위
-                .setMaximumDate(CalendarDay.from(2030,11,31))   // 달려 표시 최대 범위
+                .setMinimumDate(CalendarDay.from(2020, 0, 1))     // 달력 표시 최소범위
+                .setMaximumDate(CalendarDay.from(2030, 11, 31))   // 달려 표시 최대 범위
                 .setCalendarDisplayMode(CalendarMode.MONTHS)                    // 달로 보여주기 WEEK 도 가능
                 .commit();
 
@@ -89,35 +127,65 @@ public class MainActivity extends AppCompatActivity {
 
 //        materialCalendarView.setShowOtherDates(MaterialCalendarView.SHOW_OUT_OF_RANGE);
 
-       //달력에 토요일, 일요일, 현재 날짜 표시하기 위해 참조
+        //달력에 토요일, 일요일, 현재 날짜 표시하기 위해 참조
         materialCalendarView.addDecorators(
                 new SaturdayDecorator(), //토요일 표시기
                 new SundayDecorator(),  // 일요일 표시기
                 oneDayDecorator);       // 하루 표시기
 
-      selected_list = new ArrayList<>();        // 선택된 날짜 리스트 -> 클릭했을 때 색으로 변하는 날짜들은 여기에 들어감
+        selected_list = new ArrayList<>();        // 선택된 날짜 리스트 -> 클릭했을 때 색으로 변하는 날짜들은 여기에 들어감
+
+        // input 에서 수정한 리스트를 들고온다.
 
         // 만약 선택되었다면
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                // 날짜가 선택되었다면,
-                if(mode) { // mode = true 시 다중선택모드
-                    Year = date.getYear();
-                    Month = date.getMonth() + 1;        // 달의 값은 하나 적어서 +1
-                    Day = date.getDay();
+
+                if (is_modify) {
+                    if (selected_list2 != null) {
+                        if (selected) {
+                            selected_date = date.getDay();
+                            for (int i = 0; i < selected_list2.size(); i++) {
+                                if (selected_date == day_list.get(i))
+                                    position = i;
+                            }
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    list_fragment.recyclerView.smoothScrollToPosition(position);
+                                }
+                            }, 700);
+                        } else {
+                            position = 0;
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    list_fragment.recyclerView.smoothScrollToPosition(position);
+                                }
+                            }, 700);
+                        }
+                    }
+                } else {
+                    // 날짜가 선택되었다면,
+                    if (mode) { // mode = true 시 다중선택모드
+                        Year = date.getYear();
+                        Month = date.getMonth() + 1;        // 달의 값은 하나 적어서 +1
+                        Day = date.getDay();
 
 //                    Log.i("Year Test", Year + "");
 //                    Log.i("Month Test", Month + "");
 //                    Log.i("Day Test", Day + "");
 
-                    String shot_Day = Year + "," + Month + "," + Day; // 선택한 날짜 2020,00,00 형식으로 들어감.
+                        String shot_Day = Year + "," + Month + "," + Day; // 선택한 날짜 2020,00,00 형식으로 들어감.
 
-                    if (selected) selected_list.add(shot_Day); // 만약에 선택되었다면 -> 리스트에 추가 "2020,00,00"
-                    else selected_list.remove(shot_Day);       // 선택 해제 시 리스트에서 제거
+                        if (selected)
+                            selected_list.add(shot_Day); // 만약에 선택되었다면 -> 리스트에 추가 "2020,00,00"
+                        else selected_list.remove(shot_Day);       // 선택 해제 시 리스트에서 제거
 
 //                    Toast.makeText(MainActivity.this, selected_list.toString(), Toast.LENGTH_SHORT).show();
 //                    Log.i("shot_Day test", shot_Day + "");
+                    }
                 }
             }
         });
@@ -127,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRangeSelected(@NonNull MaterialCalendarView widget, @NonNull List<CalendarDay> dates) {
 
-                if(count == 1) { // 두번째 선택될 때
+                if (count == 1) { // 두번째 선택될 때
                     selected_list.clear();  // 이전에 선택됐던 값 제거
                     count = 0;  // 처음 선택으로 되돌림
                 }
@@ -176,23 +244,41 @@ public class MainActivity extends AppCompatActivity {
         select_all_range.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mode) {
+                if (mode) {
                     materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_RANGE); // 달력 선택 모드 바꿈 -> 범위
                     select_all_range.setText("다중 선택");
                     mode = false;
                     count = 0;
-                }
-                else {
+                } else {
                     materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE); // 달력 선택 모드 바꿈 -> 다중
                     select_all_range.setText("범위 선택");
                     mode = true;
                 }
             }
         });
+
+        // 수정 버튼
+        modify_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                select_all_range.setVisibility(View.VISIBLE);
+                add_button.setVisibility(View.VISIBLE);
+                clear_button.setVisibility(View.VISIBLE);
+                modify_button.setVisibility(View.GONE);
+                materialCalendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_MULTIPLE);
+                is_modify = false;
+                selected_list.clear();      // 리스트 초기화
+                materialCalendarView.clearSelection();  // 선택으로 칠해진 날짜들 초기화
+            }
+        });
+
+        if(selected_list2 != null)
+        Toast.makeText(this, selected_list2.toString(), Toast.LENGTH_SHORT).show();
     }
 
     /**
      * 날짜순으로 정렬한다.
+     *
      * @param list 선택된 날짜 리스트
      */
     public void order_date(ArrayList<String> list) {
@@ -205,12 +291,79 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder time1 = new StringBuilder();
                 StringBuilder time2 = new StringBuilder();
 
-                for(int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++) {
                     time1.append(result1[i]);
                     time2.append(result2[i]);
                 }
                 return Integer.compare(Integer.parseInt(time1.toString()), Integer.parseInt(time2.toString()));
             }
         });
+
+//        HashSet<String> set = new HashSet<>();
+//        for(int i = 0; i < list.size(); i++) {
+//            set.add(list.get(i));
+//        }
+//        selected_list = new ArrayList<>(set);
+    }
+
+    private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
+
+        ArrayList<String> Time_Result;
+
+        ApiSimulator(ArrayList<String> Time_Result) {
+            this.Time_Result = Time_Result;
+        }
+
+        @Override
+        protected List<CalendarDay> doInBackground(Void... voids) {
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            ArrayList<CalendarDay> dates = new ArrayList<>();
+            calendar.add(Calendar.MONTH, 0);
+
+            /**
+             * 특정날짜 달력에 점 표시 해주는 곳
+             * 월을 0이 1월 년, 일은 그대로 한다.
+             * String 문자열인 Time_Result 를 받아와서 ,를 기준으로 자르고 String을 int로 변환
+             * 아직 안씀.
+             */
+
+            for (int i = 0; i < Time_Result.size(); i++) {
+                String[] time = Time_Result.get(i).split(",");
+                int year = Integer.parseInt(time[0]);
+                int month = Integer.parseInt(time[1]);
+                int dayy = Integer.parseInt(time[2]);
+                CalendarDay day = CalendarDay.from(year, month - 1, dayy);
+                dates.add(day);
+                calendar.set(year, month - 1, dayy);
+            }
+            return dates;
+        }
+
+        @Override
+        protected void onPostExecute(List<CalendarDay> calendarDays) {
+            super.onPostExecute(calendarDays);
+
+            if (isFinishing()) {
+                return;
+            }
+            materialCalendarView.addDecorator(new EventDecorator(Color.RED, calendarDays, MainActivity.this));
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(System.currentTimeMillis()-time>=2000){
+            time=System.currentTimeMillis();
+            Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
+        }else if(System.currentTimeMillis()-time<2000){
+            finish();
+        }
     }
 }

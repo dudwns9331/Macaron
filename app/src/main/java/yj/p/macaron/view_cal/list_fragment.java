@@ -27,7 +27,7 @@ import yj.p.macaron.add.inputActivity;
 public class list_fragment extends Fragment {
 
     ArrayList<String> work_list;
-    RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     public static Work_date_adapter date_adapter;
     static boolean first;
     ItemTouchHelper itemTouchHelper;

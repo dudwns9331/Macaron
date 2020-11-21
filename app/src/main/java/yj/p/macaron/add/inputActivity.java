@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import yj.p.macaron.MainActivity;
 import yj.p.macaron.R;
 import yj.p.macaron.view_cal.list_fragment;
-import yj.p.macaron.view_cal.view_work_information;
 
 public class inputActivity extends AppCompatActivity {
 
@@ -124,5 +123,10 @@ public class inputActivity extends AppCompatActivity {
                 super.onDraw(c, parent, state);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
     }
 }
