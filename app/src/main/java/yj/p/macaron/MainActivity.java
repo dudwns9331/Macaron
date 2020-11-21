@@ -1,21 +1,19 @@
 package yj.p.macaron;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-// import android.util.Log;
 import android.os.Handler;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-// import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -27,11 +25,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import yj.p.macaron.add.Work_date_adapter;
 import yj.p.macaron.add.inputActivity;
 import yj.p.macaron.decorators.EventDecorator;
 import yj.p.macaron.decorators.OneDayDecorator;
@@ -39,8 +35,13 @@ import yj.p.macaron.decorators.SaturdayDecorator;
 import yj.p.macaron.decorators.SundayDecorator;
 import yj.p.macaron.view_cal.list_fragment;
 
+// import android.util.Log;
+// import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    ActionBar actionBar;
 
     int Year, Month, Day;       // 선택된 날짜 연도, 달, 일 기록하는 변수
     private final OneDayDecorator oneDayDecorator = new OneDayDecorator(); // 현재 날짜를 커스텀하기 위한 데코레이터
@@ -100,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        actionBar = getSupportActionBar();
 
         materialCalendarView = findViewById(R.id.calendarView);     // 캘린더 아이디 지정
         add_button = findViewById(R.id.add_button);          // 추가 버튼
@@ -298,12 +301,6 @@ public class MainActivity extends AppCompatActivity {
                 return Integer.compare(Integer.parseInt(time1.toString()), Integer.parseInt(time2.toString()));
             }
         });
-
-//        HashSet<String> set = new HashSet<>();
-//        for(int i = 0; i < list.size(); i++) {
-//            set.add(list.get(i));
-//        }
-//        selected_list = new ArrayList<>(set);
     }
 
     private class ApiSimulator extends AsyncTask<Void, Void, List<CalendarDay>> {
@@ -357,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     public void onBackPressed(){
         if(System.currentTimeMillis()-time>=2000){
@@ -365,5 +363,34 @@ public class MainActivity extends AppCompatActivity {
         }else if(System.currentTimeMillis()-time<2000){
             finish();
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu); // 인플레이터로 객체화 시키기
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) { // 메뉴 아이템의 아이디 가져옴.
+        int curId = item.getItemId();
+        switch (curId) {
+            case R.id.cal:
+                Toast.makeText(this, "캘린더", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.board:
+                Toast.makeText(this, "게시판", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.sal:
+                Toast.makeText(this, "급여", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.logout:
+                Toast.makeText(this, "로그아웃", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

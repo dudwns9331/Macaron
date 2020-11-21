@@ -59,19 +59,18 @@ public class CustomDialog extends Dialog {
                 if(listener != null) {
                     name = mod_name.getText().toString();
 
-                    if(!name.equals("")) {
+                    if(name.length() >= 2 && s_time != null && e_time != null) {
                         date.setWorker(name);
                         date.addWorker(name);
-                    }
-                    else Toast.makeText(context, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(context, date.getWorkerall(), Toast.LENGTH_SHORT).show();
-
-                    if(s_time != null && e_time != null) {
                         work_time = s_time + " ~ " + e_time;
                         date.setWork_time(work_time);
                         date.addwork_time(work_time);
                     }
-                    else Toast.makeText(context, "시작 시간과 종료 시간을 설정 해 주세요.", Toast.LENGTH_SHORT).show();
+                    else {
+                        Toast.makeText(context, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "시작 시간과 종료 시간을 설정 해 주세요.", Toast.LENGTH_SHORT).show();
+                    }
+//                  Toast.makeText(context, date.getWorkerall(), Toast.LENGTH_SHORT).show();
                     listener.onFinish(position, date);
                     dismiss();
                 }
