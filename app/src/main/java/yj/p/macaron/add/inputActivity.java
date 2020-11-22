@@ -10,9 +10,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import yj.p.macaron.MainActivity;
@@ -28,8 +33,11 @@ public class inputActivity extends AppCompatActivity {
     Button select_all_button;       // 모두 선택 버튼
     Button delete_button;           // 지우기 버튼
     Button save_button;             // 저장 버튼
+    Work_date work_date;
 
-    public static ArrayList<String> data;
+    public ArrayList<String> data;
+    public ArrayList<String> data2 = new ArrayList<String>();
+    public ArrayList<String> delete_data = new ArrayList<String>();
     @SuppressLint("StaticFieldLeak")
     public static Work_date_adapter date_adapter;
 
@@ -61,7 +69,6 @@ public class inputActivity extends AppCompatActivity {
         // 메인 엑티비티(달력) 에서 intent로 값 불러옴
         Intent intent = getIntent();
         data = (ArrayList<String>) intent.getSerializableExtra("work_data"); // 배열안에 날짜 들어가 있음.
-
         assert data != null;
         for(int i = 0; i < data.size(); i++) {
             // , 으로 구분된 날짜 하나씩 찢기
@@ -70,7 +77,7 @@ public class inputActivity extends AppCompatActivity {
             int month = Integer.parseInt(result[1]);
             int day = Integer.parseInt(result[2]);
             String worker = day + "일 근무자";
-            Work_date work_date = new Work_date(year, month, day,  worker);
+            work_date = new Work_date(year, month, day,  worker);
             work_date.setWork_time("근무 시간");
             date_adapter.addItem(work_date);    // work_date 객체에  year, month, day, worker 의 값이 들어간다.
         }
@@ -107,7 +114,9 @@ public class inputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                getRecentData();
                 intent.putExtra("work_data_new", data);
+                intent.putExtra("work_data_delete", delete_data);
                 intent.setFlags((Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 startActivity(intent);
             }
@@ -123,6 +132,21 @@ public class inputActivity extends AppCompatActivity {
                 super.onDraw(c, parent, state);
             }
         });
+    }
+
+    public void getRecentData() {
+        data2.addAll(data);
+        data.clear();
+
+        for(int i = 0; i < date_adapter.items.size(); i++) {
+            data.add(date_adapter.getItem(i).year + ","+date_adapter.getItem(i).month+","+date_adapter.getItem(i).date);
+        }
+
+        for(int i = 0; i < data2.size(); i++){
+            if(!data.contains(data2.get(i))){
+                delete_data.add(data2.get(i));
+            }
+        }
     }
 
     @Override
